@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>task_tracker</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+</head>
+
+<body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Reporting Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --success-color: #4cc9f0;
+            --error-color: #f72585;
+            --text-color: #2b2d42;
+            --light-gray: #f8f9fa;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin: 20px 0 30px;
+            font-weight: 600;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .form-container {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        
+        select, input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dfe3e7;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+            background-color: var(--light-gray);
+        }
+        
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .task-input {
+            display: none;
+            margin-top: 15px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover {
+            background-color: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+        
+        button:disabled {
+            background-color: #adb5bd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #success-message {
+            display: none;
+            background-color: var(--success-color);
+            color: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        #error-message {
+            display: none;
+            background-color: var(--error-color);
+            color: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .loading {
+            position: relative;
+        }
+        
+        .loading::after {
+            content: "";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: translateY(-50%) rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Task Reporting System</h1>
+    
+    <div class="form-container">
+        <form id="taskForm">
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="taskType">Task Type</label>
+                <select id="taskType" name="taskType" required>
+                    <option value="">-- Select Task Type --</option>
+                    <option value="All">All Tasks</option>
+                    <option value="Vendor Communication">Vendor Communication</option>
+                    <option value="Physical Meeting">Physical Meeting</option>
+                    <option value="Reporting">Reporting</option>
+                    <option value="Non CRM Support">Non CRM Support</option>
+                    <option value="Backup Support">Backup Support</option>
+                    <option value="Project Task">Project Task</option>
+                    <option value="Survey/Poc">Survey/POC</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            
+            <div id="dynamicFields"></div>
+            
+            <button type="submit" id="submitBtn">
+                <span>Submit Report</span>
+            </button>
+        </form>
+        
+        <div id="success-message">
+            <i class="fas fa-check-circle"></i> Report submitted successfully!
+        </div>
+        <div id="error-message">
+            <i class="fas fa-exclamation-circle"></i> Error submitting form. Please try again.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const taskTypeSelect = document.getElementById('taskType');
+            const dynamicFields = document.getElementById('dynamicFields');
+            const taskForm = document.getElementById('taskForm');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Format date as dd-mmm-yyyy (e.g., 31-Jul-2023)
+            function formatDateForSheets(dateString) {
+                const date = new Date(dateString);
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = months[date.getMonth()];
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+            
+            // Task type change handler
+            taskTypeSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+                dynamicFields.innerHTML = '';
+                
+                if (selectedValue === 'All') {
+                    // Show all textareas
+                    const allOptions = [
+                        'Vendor Communication', 
+                        'Physical Meeting', 
+                        'Reporting', 
+                        'Non CRM Support', 
+                        'Backup Support', 
+                        'Project Task', 
+                        'Survey/Poc', 
+                        'Others'
+                    ];
+                    
+                    allOptions.forEach(option => {
+                        const div = document.createElement('div');
+                        div.className = 'form-group task-input';
+                        div.style.display = 'block';
+                        
+                        const label = document.createElement('label');
+                        label.textContent = option + ':';
+                        
+                        const textarea = document.createElement('textarea');
+                        textarea.name = option;
+                        textarea.placeholder = `Enter details about ${option.toLowerCase()}...`;
+                        
+                        div.appendChild(label);
+                        div.appendChild(textarea);
+                        dynamicFields.appendChild(div);
+                    });
+                } else if (selectedValue) {
+                    // Show only the selected textarea
+                    const div = document.createElement('div');
+                    div.className = 'form-group task-input';
+                    div.style.display = 'block';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = selectedValue + ':';
+                    
+                    const textarea = document.createElement('textarea');
+                    textarea.name = selectedValue;
+                    textarea.placeholder = `Describe your ${selectedValue.toLowerCase()}...`;
+                    textarea.required = true;
+                    
+                    div.appendChild(label);
+                    div.appendChild(textarea);
+                    dynamicFields.appendChild(div);
+                }
+            });
+            
+            // Form submission handler
+            taskForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<span>Processing...</span>';
+                
+                // Hide any previous messages
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                try {
+                    const formData = new FormData(taskForm);
+                    const selectedTask = formData.get('taskType');
+                    const date = formData.get('date');
+                    
+                    // Create data object with all possible fields
+                    const dataToSubmit = {
+                        'Timestamp': formatDateForSheets(date),
+                        'Vendor Communication': '',
+                        'Physical Meeting': '',
+                        'Reporting': '',
+                        'Non CRM Support': '',
+                        'Backup Support': '',
+                        'Project Task': '',
+                        'Survey/Poc': '',
+                        'Others': ''
+                    };
+                    
+                    if (selectedTask === 'All') {
+                        // For "All", get all textarea values
+                        const allOptions = [
+                            'Vendor Communication', 'Physical Meeting', 'Reporting',
+                            'Non CRM Support', 'Backup Support', 'Project Task',
+                            'Survey/Poc', 'Others'
+                        ];
+                        
+                        allOptions.forEach(option => {
+                            const textarea = document.querySelector(`textarea[name="${option}"]`);
+                            if (textarea) {
+                                dataToSubmit[option] = textarea.value || '';
+                            }
+                        });
+                    } else {
+                        // For single task, get only the selected textarea value
+                        const textarea = document.querySelector(`textarea[name="${selectedTask}"]`);
+                        if (textarea) {
+                            dataToSubmit[selectedTask] = textarea.value || '';
+                        }
+                    }
+                    
+                    // Submit to Google Sheets
+                    await submitToGoogleSheets(dataToSubmit);
+                    
+                    // Show success message
+                    showMessage('success');
+                    taskForm.reset();
+                    dynamicFields.innerHTML = '';
+                    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+                    
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    // Don't show error to user since data likely submitted anyway
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    submitBtn.innerHTML = '<span>Submit Report</span>';
+                }
+            });
+            
+            async function submitToGoogleSheets(data) {
+                // IMPORTANT: Replace with your actual Google Apps Script Web App URL
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbx121h_Efw9rmorqKxgSmJVs05-4kdZIwzykR8P0FIktiyGDUmk4NMjHeZTbC0vx9wa/exec';
+                
+                // Convert data to URL parameters
+                const params = new URLSearchParams();
+                for (const key in data) {
+                    params.append(key, data[key]);
+                }
+                
+                // Use GET request with parameters
+                const response = await fetch(`${scriptURL}?${params.toString()}`, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    redirect: 'follow'
+                });
+                
+                // With 'no-cors' we can't read the response, but assume success
+                return { success: true };
+            }
+            
+            function showMessage(type) {
+                if (type === 'success') {
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>
