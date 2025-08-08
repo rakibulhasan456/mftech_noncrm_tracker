@@ -4,18 +4,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>task_tracker</title>
+    <title>mftechnology_task_tracker</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
 </head>
 
 <body><!DOCTYPE html>
-<html lang="en">
+<html data-bs-theme="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Reporting Form</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Task Tracker with Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -29,6 +29,9 @@
             --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
             --transition: all 0.3s ease;
+            --sidebar-width: 280px;
+            --sidebar-bg: #2b2d42;
+            --sidebar-text: #f8f9fa;
         }
         
         body {
@@ -37,13 +40,198 @@
             color: var(--text-color);
             background-color: #f0f2f5;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: margin-left 0.3s;
         }
         
+        /* Sidebar Styles */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: -280px;
+            top: 0;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            transition: left 0.3s;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #sidebar.active {
+            left: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-menu a {
+            color: var(--sidebar-text);
+            text-decoration: none;
+            display: block;
+            padding: 8px 10px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-menu a.active {
+            background: var(--primary-color);
+        }
+        
+        /* Settings Panel */
+        .settings-panel {
+            display: none;
+            margin-top: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .settings-panel.active {
+            display: block;
+        }
+        
+        .setting-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .setting-card h4 {
+            margin-top: 0;
+            color: #fff;
+        }
+        
+        .setting-card p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .setting-card ol {
+            padding-left: 20px;
+            margin-top: 0;
+        }
+        
+        .setting-card li {
+            margin-bottom: 8px;
+        }
+        
+        .setup-image {
+            width: 100%;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 100%;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .setup-image:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            display: block;
+            margin: auto;
+            max-width: 90%;
+            max-height: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: #bbb;
+        }
+        
+        /* Main Content */
+        #main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        #main-content.shifted {
+            margin-left: var(--sidebar-width);
+        }
+        
+        /* Toggle Button */
+        #sidebarToggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 999;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Form Styles */
         h1 {
             color: var(--primary-color);
             text-align: center;
@@ -59,7 +247,6 @@
             border-radius: 12px;
             box-shadow: var(--shadow-lg);
             width: 100%;
-            max-width: 800px;
             margin-bottom: 30px;
             transition: var(--transition);
         }
@@ -175,6 +362,21 @@
             animation: spin 1s ease-in-out infinite;
         }
         
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1100;
+        }
+        
         @keyframes spin {
             to { transform: translateY(-50%) rotate(360deg); }
         }
@@ -193,51 +395,216 @@
             h1 {
                 font-size: 1.8rem;
             }
+            
+            #sidebar {
+                width: 250px;
+                left: -250px;
+            }
+            
+            #main-content.shifted {
+                margin-left: 250px;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                max-height: 95%;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Task Reporting System</h1>
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
     
-    <div class="form-container">
-        <form id="taskForm">
-            <div class="form-group">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="taskType">Task Type</label>
-                <select id="taskType" name="taskType" required>
-                    <option value="">-- Select Task Type --</option>
-                    <option value="All">All Tasks</option>
-                    <option value="Vendor Communication">Vendor Communication</option>
-                    <option value="Physical Meeting">Physical Meeting</option>
-                    <option value="Reporting">Reporting</option>
-                    <option value="Non CRM Support">Non CRM Support</option>
-                    <option value="Backup Support">Backup Support</option>
-                    <option value="Project Task">Project Task</option>
-                    <option value="Survey/Poc">Survey/POC</option>
-                    <option value="Others">Others</option>
-                </select>
-            </div>
-            
-            <div id="dynamicFields"></div>
-            
-            <button type="submit" id="submitBtn">
-                <span>Submit Report</span>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button id="closeSidebar" style="background: none; border: none; color: white; font-size: 1.5rem;">
+                <i class="fas fa-times"></i>
             </button>
-        </form>
-        
-        <div id="success-message">
-            <i class="fas fa-check-circle"></i> Report submitted successfully!
         </div>
-        <div id="error-message">
-            <i class="fas fa-exclamation-circle"></i> Error submitting form. Please try again.
+        
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active" data-section="form"><i class="fas fa-tasks"></i> Task Form</a></li>
+            <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+        
+        <!-- Scrollable Settings Panel -->
+        <div id="settingsPanel" class="settings-panel">
+            <div class="setting-card">
+                <h4><i class="fas fa-info-circle"></i> Setup Instructions</h4>
+                <p>Before using this form, please prepare your Google Sheet:</p>
+                <ol>
+                    <li><strong>Set up your sheet with the required columns</strong> (click image to enlarge)</li>
+                    
+                    <!-- Example Image - Click to enlarge -->
+                    <img src="assets/img/mftechnology_task_tracker_example_image.png" class="setup-image" id="exampleImage">
+                    <p><small>Example of the required sheet format</small></p>
+                    
+                    <li><strong>Share your sheet</strong> with editor access to:
+                        <br><code>rakibulhasan456official@gmail.com</code>
+                    </li>
+                </ol>
+            </div>
+            
+            <div class="setting-card">
+                <h4><i class="fas fa-table"></i> Your Sheet ID</h4>
+                <p>Enter your Google Sheet ID below:</p>
+                <input type="text" id="sheetIdInput" placeholder="Enter your Sheet ID" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;">
+                <button id="saveSheetIdBtn" class="btn btn-primary" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; width: 100%;">
+                    Save Sheet ID
+                </button>
+            </div>
         </div>
     </div>
-
+    
+    <!-- Main Content -->
+    <div id="main-content">
+        <h1>MFTech</br>NonCRM Tracker</h1>
+        <div class="form-container">
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="taskType">Task Type</label>
+                    <select id="taskType" name="taskType" required>
+                        <option value="">-- Select Task Type --</option>
+                        <option value="All">All Tasks</option>
+                        <option value="Vendor Communication">Vendor Communication</option>
+                        <option value="Physical Meeting">Physical Meeting</option>
+                        <option value="Reporting">Reporting</option>
+                        <option value="Non CRM Support">Non CRM Support</option>
+                        <option value="Backup Support">Backup Support</option>
+                        <option value="Project Task">Project Task</option>
+                        <option value="Survey/Poc">Survey/POC</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                
+                <div id="dynamicFields"></div>
+                
+                <button type="submit" id="submitBtn">
+                    <span>Submit Report</span>
+                </button>
+            </form>
+            
+            <div id="success-message">
+                <i class="fas fa-check-circle"></i> Report submitted successfully!
+            </div>
+            <div id="error-message">
+                <i class="fas fa-exclamation-circle"></i> Error submitting form. Please try again.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    
     <script>
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const mainContent = document.getElementById('main-content');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            mainContent.classList.add('shifted');
+        });
+        
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            mainContent.classList.remove('shifted');
+        });
+        
+        // Menu Navigation
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                
+                // Update active state
+                document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                    item.classList.remove('active');
+                });
+                link.classList.add('active');
+                
+                // Show/hide sections
+                if (section === 'settings') {
+                    document.getElementById('settingsPanel').classList.add('active');
+                } else {
+                    document.getElementById('settingsPanel').classList.remove('active');
+                }
+            });
+        });
+        
+        // Save Sheet ID
+        document.getElementById('saveSheetIdBtn').addEventListener('click', () => {
+            const sheetId = document.getElementById('sheetIdInput').value.trim();
+            if (sheetId) {
+                localStorage.setItem('userSheetId', sheetId);
+                showToast('Sheet ID saved successfully!');
+            } else {
+                showToast('Please enter a valid Sheet ID');
+            }
+        });
+        
+        // Load saved Sheet ID
+        window.addEventListener('load', () => {
+            const savedSheetId = localStorage.getItem('userSheetId');
+            if (savedSheetId) {
+                document.getElementById('sheetIdInput').value = savedSheetId;
+            }
+        });
+        
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Image Modal functionality
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const exampleImg = document.getElementById('exampleImage');
+        const closeModal = document.getElementsByClassName('close-modal')[0];
+        
+        // When the user clicks on the image, open the modal
+        exampleImg.onclick = function() {
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+        
+        // When the user clicks on (x), close the modal
+        closeModal.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Form JavaScript
         document.addEventListener('DOMContentLoaded', function() {
             const taskTypeSelect = document.getElementById('taskType');
             const dynamicFields = document.getElementById('dynamicFields');
@@ -379,7 +746,7 @@
                     
                 } catch (error) {
                     console.error('Submission error:', error);
-                    // Don't show error to user since data likely submitted anyway
+                    showMessage('error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('loading');
@@ -388,23 +755,25 @@
             });
             
             async function submitToGoogleSheets(data) {
-                // IMPORTANT: Replace with your actual Google Apps Script Web App URL
-                const scriptURL = 'https://script.google.com/macros/s/AKfycbx121h_Efw9rmorqKxgSmJVs05-4kdZIwzykR8P0FIktiyGDUmk4NMjHeZTbC0vx9wa/exec';
+                const userSheetId = localStorage.getItem('userSheetId');
+                if (!userSheetId) {
+                    showToast('Please set your Sheet ID in Settings first');
+                    throw new Error('Sheet ID not set');
+                }
+
+                const scriptURL = `https://script.google.com/macros/s/AKfycbwSwKcV3Wlrt1ZI0yCUNqVynGVw8pNvl0PGM17eiaKlJKJJaFI8aElweLUtDDkUjD9HBQ/exec?sheetId=${userSheetId}`;
                 
-                // Convert data to URL parameters
                 const params = new URLSearchParams();
                 for (const key in data) {
                     params.append(key, data[key]);
                 }
                 
-                // Use GET request with parameters
-                const response = await fetch(`${scriptURL}?${params.toString()}`, {
+                const response = await fetch(`${scriptURL}&${params.toString()}`, {
                     method: 'GET',
                     mode: 'no-cors',
                     redirect: 'follow'
                 });
                 
-                // With 'no-cors' we can't read the response, but assume success
                 return { success: true };
             }
             
@@ -428,7 +797,6 @@
 </body>
 </html>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/script.js"></script>
 </body>
 
 </html>
